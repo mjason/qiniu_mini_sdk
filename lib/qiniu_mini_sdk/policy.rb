@@ -3,6 +3,7 @@
 require 'json'
 require 'base64'
 require 'openssl'
+require 'uri'
 
 module QiniuMiniSdk
   class Policy
@@ -33,11 +34,18 @@ module QiniuMiniSdk
       "#{access_key}:#{encoded_sign}:#{hmac_sha1_sign encoded_put_policy}"
     end
 
+    def acctoken
+      uri = URI.parse(@url)
+      signing_str = "#{uri.path}?#{uri.query}\n#{@body}"
+      "#{QiniuMiniSdk.access_key}:#{hmac_sha1_sign signing_str}"
+    end
+
     def download_url
       base_url = QiniuMiniSdk.urls[@bucket] || "http://#{@bucket}.qiniudn.com"
       url = "#{base_url}/#{@key}?e=#{@params[:deadline]}"
       "#{url}&token=#{QiniuMiniSdk.access_key}:#{hmac_sha1_sign url}"
     end
+
 
     def method_missing(meth, *args, &blk)
       if meth =~ /(.+)=/
