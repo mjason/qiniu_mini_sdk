@@ -1,24 +1,26 @@
 module QiniuMiniSdk
   class Policy
-    def initialize bucket, expires_in=3600, deadline=0, key=0
+    def initialize args={}
       @params = {}
-      @bucket = bucket
-      @key = key
-      @expires_in = expires_in
-      @deadline = deadline
-    end
-
-    def deadline
-      return deadline if deadline > 0
-      Time.now.to_i + @expires_in
-    end
-
-    def scope
-      if @key.nil?
-        @bucket
-      else
-        "#{@bucket}:#{@key}"
+      args.each do |k, v|
+        self.send "#{k}=", v
       end
+    end
+
+    def key=(key)
+      @key = key
+    end
+
+    def bucket=(bucket)
+      @bucket = bucket
+    end
+
+    def expires_in=(time=3600)
+      @params[:deadline] = Time.now.to_i + @params[:expires_in]
+    end
+
+    def deadline=(time)
+      @params[:deadline] = time if @params[:expires_in].nil?
     end
 
     def uptoken
@@ -34,14 +36,12 @@ module QiniuMiniSdk
 
     def method_missing(meth, *args, &blk)
       if meth =~ /(.+)=/
-        puts args.first
-        params[$1.to_s] = args.first
+        @params[$1.to_s] = args.first
       end
     end
 
-    private
     def to_json
-
+      @params.to_json
     end
 
   end
