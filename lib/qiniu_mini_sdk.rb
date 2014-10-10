@@ -9,11 +9,15 @@ module QiniuMiniSdk
   end
 
   class << self
-    attr_accessor :access_key, :secret_key, :urls
+    attr_accessor :access_key, :secret_key
 
     def bucket_url bucket_name, bucket_url
       @urls ||= {}
       @urls[bucket_name] = bucket_url
+    end
+
+    def urls
+      @urls
     end
 
   end
