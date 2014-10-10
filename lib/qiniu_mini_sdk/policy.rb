@@ -28,14 +28,14 @@ module QiniuMiniSdk
 
     def uptoken
       access_key = QiniuMiniSdk.access_key
-      secret_key = QiniuMiniSdk.secret_key
-
       encoded_put_policy = urlsafe_base64_encode(self.to_json)
-      digest = OpenSSL::Digest.new('sha1')
-      sign = OpenSSL::HMAC.digest(digest, secret_key, encoded_put_policy)
-      encoded_sign = urlsafe_base64_encode(sign)
+      "#{access_key}:#{encoded_sign}:#{hmac_sha1_sign encoded_put_policy}"
+    end
 
-      "#{access_key}:#{encoded_sign}:#{encoded_put_policy}"
+    def download_url
+      base_url = QiniuMiniSdk.url || "http://#{@bucket}.qiniudn.com"
+      url = "#{base_url}/#{key}?e={@params[:deadline]}"
+      "#{url}&token=#{QiniuMiniSdk.access_key}:#{hmac_sha1_sign url}"
     end
 
     def method_missing(meth, *args, &blk)
@@ -70,6 +70,11 @@ module QiniuMiniSdk
 
     def urlsafe_base64_encode content
       Base64.encode64(content).strip.gsub('+', '-').gsub('/','_').gsub(/\r?\n/, '')
+    end
+
+    def hmac_sha1_sign(data)
+      digest = OpenSSL::Digest.new('sha1')
+      urlsafe_base64_encode OpenSSL::HMAC.digest(digest, QiniuMiniSdk.secret_key, data)
     end
 
   end

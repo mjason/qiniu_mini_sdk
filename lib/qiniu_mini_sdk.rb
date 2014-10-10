@@ -9,7 +9,7 @@ module QiniuMiniSdk
   end
 
   class << self
-    attr_accessor :access_key, :secret_key
+    attr_accessor :access_key, :secret_key, :url
   end
 
 end
