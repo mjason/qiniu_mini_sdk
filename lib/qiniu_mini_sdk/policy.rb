@@ -1,5 +1,5 @@
 # coding: utf-8
-require 'hmac-sha1'
+require 'hmac/sha1'
 require 'uri'
 require 'cgi'
 
