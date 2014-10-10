@@ -34,7 +34,7 @@ module QiniuMiniSdk
 
     def download_url
       base_url = QiniuMiniSdk.url || "http://#{@bucket}.qiniudn.com"
-      url = "#{base_url}/#{key}?e=#{@params[:deadline]}"
+      url = "#{base_url}/#{@key}?e=#{@params[:deadline]}"
       "#{url}&token=#{QiniuMiniSdk.access_key}:#{hmac_sha1_sign url}"
     end
 
