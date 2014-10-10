@@ -21,7 +21,7 @@ module QiniuMiniSdk
     end
 
     def expires_in=(time)
-      @params[:deadline] = Time.now.to_i + @params[:expires_in]
+      @params[:deadline] = Time.now.to_i + time
     end
 
     def uptoken
