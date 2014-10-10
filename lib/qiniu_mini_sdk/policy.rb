@@ -78,7 +78,7 @@ module QiniuMiniSdk
     end
 
     def default
-      raise "没有指定bucket" if @bucket.nil?
+      raise "没有指定bucket" if @bucket.nil? && @url.nil?
       self.expires_in = 3600 if @params[:deadline].nil?
       @params[:scope] = "#{@bucket}:#{@key}" unless @key.nil?
       @params[:scope] = "#{@bucket}" if @key.nil?
