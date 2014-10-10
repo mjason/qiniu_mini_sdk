@@ -35,6 +35,10 @@ qiniu.uptoken
 # 获取下载地址
 qiniu = QiniuMiniSdk::Policy.new bucket: '你的buckname', key: '你下载资源的key', expires_in: '有效期,可以不填直接忽略这个参数, 默认为3600秒'
 qiniu.download_url
+
+# 管理token
+qiniu = QiniuMiniSdk::Policy.new url: "http://rs.qiniu.com/delete/#{QiniuMiniSdk::Sign.urlsafe_base64_encode 'test-123123:FuAUJ1D1kqiFSJ8bhJ2ZvfyJj_aH'}"
+qiniu.acctoken
 ```
 
 ## Contributing
