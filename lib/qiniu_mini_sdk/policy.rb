@@ -23,6 +23,13 @@ module QiniuMiniSdk
       @bucket = bucket
     end
 
+    def url=(url)
+      @url = url
+    end
+
+    def body=(body)
+      @body = body
+    end
 
     def expires_in=(time)
       @params[:deadline] = Time.now.to_i + time
