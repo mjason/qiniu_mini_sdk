@@ -34,7 +34,8 @@ module QiniuMiniSdk
 
     def method_missing(meth, *args, &blk)
       if meth =~ /(.+)=/
-        params[$1] = args
+        puts args.first
+        params[$1.to_s] = args.first
       end
     end
 
