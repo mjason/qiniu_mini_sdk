@@ -1,6 +1,8 @@
 # coding: utf-8
 
-require 'uri'
+require 'json'
+require 'base64'
+require 'openssl'
 
 module QiniuMiniSdk
   class Policy
@@ -25,13 +27,13 @@ module QiniuMiniSdk
     end
 
     def uptoken
-      access_key = Config.settings[:access_key]
-      secret_key = Config.settings[:secret_key]
+      access_key = QiniuMiniSdk.access_key
+      secret_key = QiniuMiniSdk.secret_key
 
-      encoded_put_policy = Utils.urlsafe_base64_encode(self.to_json)
+      encoded_put_policy = urlsafe_base64_encode(self.to_json)
       digest = OpenSSL::Digest.new('sha1')
-      hmac = OpenSSL::HMAC.digest(digest, secret_key, encoded_put_policy)
-      encoded_sign = Utils.urlsafe_base64_encode(sign)
+      sign = OpenSSL::HMAC.digest(digest, secret_key, encoded_put_policy)
+      encoded_sign = urlsafe_base64_encode(sign)
 
       "#{access_key}:#{encoded_sign}:#{encoded_put_policy}"
     end
@@ -43,18 +45,18 @@ module QiniuMiniSdk
     end
 
     def to_json
-      @params.map {|k, v|
-        [change_key(k), v]
-      }.to_h.to_json
+      JSON.generate @params.map {|k, v|
+        [change_key(k.to_s), v]
+      }.to_h
     end
 
     private
     def change_key(key)
-      key.each_with_index.map { |value, index|
-        if i != 0
-          value.capitalize
-        else
+      key.split("_").each_with_index.map { |value, index|
+        if index == 0
           value
+        else
+          value.capitalize
         end
       }.join
     end
@@ -64,6 +66,10 @@ module QiniuMiniSdk
       self.expires_in = 3600 if @params[:deadline].nil?
       @params[:scope] = "#{@bucket}:#{@key}" unless @key.nil?
       @params[:scope] = "#{@bucket}" if @key.nil?
+    end
+
+    def urlsafe_base64_encode content
+      Base64.encode64(content).strip.gsub('+', '-').gsub('/','_').gsub(/\r?\n/, '')
     end
 
   end
