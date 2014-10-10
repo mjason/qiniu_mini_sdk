@@ -43,7 +43,8 @@ module QiniuMiniSdk
 
     def acctoken
       uri = URI.parse(@url)
-      signing_str = "#{uri.path}?#{uri.query}\n#{@body}"
+      query = '?' + uri.query unless uri.query.nil?
+      signing_str = "#{uri.path}#{uri.query}\n#{@body}"
       "#{QiniuMiniSdk.access_key}:#{hmac_sha1_sign signing_str}"
     end
 
