@@ -1,5 +1,4 @@
 # coding: utf-8
-require 'hmac/sha1'
 require 'uri'
 require 'cgi'
 
@@ -30,7 +29,8 @@ module QiniuMiniSdk
       secret_key = Config.settings[:secret_key]
 
       encoded_put_policy = Utils.urlsafe_base64_encode(self.to_json)
-      sign = HMAC::SHA1.new(secret_key).update(encoded_put_policy).digest
+      digest = OpenSSL::Digest.new('sha1')
+      hmac = OpenSSL::HMAC.digest(digest, secret_key, encoded_put_policy)
       encoded_sign = Utils.urlsafe_base64_encode(sign)
 
       "#{access_key}:#{encoded_sign}:#{encoded_put_policy}"
