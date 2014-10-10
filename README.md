@@ -1,6 +1,6 @@
 # QiniuMiniSdk
 
-TODO: Write a gem description
+一个无依赖的七牛sdk, 只是生成上传凭证
 
 ## Installation
 
@@ -20,7 +20,15 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+QiniuMiniSdk.setup do |config|
+  config.access_key = 'xxxx'
+  config.secret_key = 'sdfadsf'
+end
+
+qiniu = QiniuMiniSdk::Policy.new bucket: '你的buckname'
+qiniu.uptoken
+```
 
 ## Contributing
 

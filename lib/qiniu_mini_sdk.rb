@@ -6,6 +6,10 @@ module QiniuMiniSdk
 
   class << self
     attr_accessor :access_key, :secret_key
+
+    def setup
+      yield self
+    end
   end
 
 end
