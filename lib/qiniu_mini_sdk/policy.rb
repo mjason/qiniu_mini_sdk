@@ -1,6 +1,7 @@
 module QiniuMiniSdk
   class Policy
-    def initialize bucket, expires_in=3600, deadline, key
+    def initialize bucket, expires_in=3600, deadline=0, key=0
+      @params = {}
       @bucket = bucket
       @key = key
       @expires_in = expires_in
@@ -33,7 +34,7 @@ module QiniuMiniSdk
 
     def method_missing(meth, *args, &blk)
       if meth =~ /(.+)=/
-        puts $1
+        params[$1] = args
       end
     end
 
