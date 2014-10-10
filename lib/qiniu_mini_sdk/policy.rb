@@ -1,3 +1,8 @@
+# coding: utf-8
+require 'hmac-sha1'
+require 'uri'
+require 'cgi'
+
 module QiniuMiniSdk
   class Policy
     def initialize args={}
@@ -5,6 +10,7 @@ module QiniuMiniSdk
       args.each do |k, v|
         self.send "#{k}=", v
       end
+      default
     end
 
     def key=(key)
@@ -15,12 +21,8 @@ module QiniuMiniSdk
       @bucket = bucket
     end
 
-    def expires_in=(time=3600)
+    def expires_in=(time)
       @params[:deadline] = Time.now.to_i + @params[:expires_in]
-    end
-
-    def deadline=(time)
-      @params[:deadline] = time if @params[:expires_in].nil?
     end
 
     def uptoken
@@ -41,7 +43,27 @@ module QiniuMiniSdk
     end
 
     def to_json
-      @params.to_json
+      @params.map {|k, v|
+        [change_key(k), v]
+      }.to_h.to_json
+    end
+
+    private
+    def change_key(key)
+      key.each_with_index.map { |value, index|
+        if i != 0
+          value.capitalize
+        else
+          value
+        end
+      }.join
+    end
+
+    def default
+      raise "没有指定bucket" if @bucket.nil?
+      self.expires_in = 3600 if @params[:deadline].nil?
+      @params[:scope] = "#{@bucket}:#{@key}" unless @key.nil?
+      @params[:scope] = "#{@bucket}" if @key.nil?
     end
 
   end
