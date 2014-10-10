@@ -22,6 +22,7 @@ module QiniuMiniSdk
       @bucket = bucket
     end
 
+
     def expires_in=(time)
       @params[:deadline] = Time.now.to_i + time
     end
@@ -33,7 +34,7 @@ module QiniuMiniSdk
     end
 
     def download_url
-      base_url = QiniuMiniSdk.url || "http://#{@bucket}.qiniudn.com"
+      base_url = QiniuMiniSdk.urls[@bucket] || "http://#{@bucket}.qiniudn.com"
       url = "#{base_url}/#{@key}?e=#{@params[:deadline]}"
       "#{url}&token=#{QiniuMiniSdk.access_key}:#{hmac_sha1_sign url}"
     end
